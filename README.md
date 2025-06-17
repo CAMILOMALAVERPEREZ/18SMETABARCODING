@@ -1,3 +1,4 @@
+
 HEAD
 # Proyecto de Metabarcoding 18S - Análisis comparativo de pipelines
 
@@ -89,3 +90,6 @@ Este repositorio es de uso académico e investigativo. Puedes adaptarlo, reutili
 
 # METABARCODING_18S
 7a4c811d8fd54ccac71cc3c1362cc41d1466d329
+
+# 18SMETABARCODING
+68acc9f9e605ceda669940079a2dfbae1bec2df8
