@@ -1,0 +1,17 @@
+# Ignorar datos pesados
+*.fastq
+*.fastq.gz
+*.html
+*.zip
+*.tar.gz
+*.bam
+*.fasta
+*.fa
+*.fq
+*.log
+*.sam
+*.vcf
+
+# Ignorar carpetas grandes
+data/
+results/
