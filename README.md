@@ -33,6 +33,28 @@ El análisis contempla combinaciones formadas por:
 Total de combinaciones: 2 (recortes) × 5 (ensambles) × 3 (BD) = **30 pipelines**
 
 ---
+## 🧰 Análisis de calidad posterior al recorte
+
+Después de aplicar los filtros con **cutadapt** y **trimmomatic**, se ejecutaron análisis complementarios para evaluar el efecto del recorte sobre la calidad de las secuencias y las características de los fragmentos:
+
+- **Resumen de filtrado:** total de secuencias, bases y porcentaje de pérdida tras el recorte.
+- **Bases con calidad Q<20:** conteo y porcentaje de bases por debajo del umbral Q20.
+- **Distribución de tamaños:** distribución de longitudes de secuencias tras el filtrado.
+
+Los resultados de estos análisis se encuentran organizados en:
+results/
+└── resumen_filtrado/
+├── cutadapt_Q20/
+│ ├── tabla_resumen_cutadapt
+│ ├── resumen_bases_Q20
+│ └── distribucion_tamanos
+└── trimmomatic_Q20/
+├── tabla_resumen_trimmomatic
+├── resumen_bases_Q20
+└── distribucion_tamanos
+Estos archivos pueden utilizarse para análisis estadísticos y visualización comparativa entre métodos de filtrado.
+
+---
 
 ## 📁 Estructura del repositorio
 
@@ -56,7 +78,8 @@ scripts/
 results/
 ├── tablas_genero/ # Tablas de abundancia por género
 ├── graficos/ # Gráficos de diversidad, composición, etc.
-└── comparaciones_pipeline/ # Comparaciones cruzadas entre combinaciones
+├── comparaciones_pipeline/ # Comparaciones cruzadas entre combinaciones
+├── resumen_filtrado/ # Resultados de calidad y fragmentación post-filtrado
 
 notebooks/ # Jupyter Notebooks para visualización
 envs/ # Archivos de entorno (conda, QIIME, etc.)
@@ -80,7 +103,7 @@ cd METABARCODING18S
 ## 👨‍🔬 Autor
 
 M. sc Sergio Camilo Malaver Pérez  
-Doctorado en Ciencias Biológicas
+Doctorante en Ciencias Quimico Biológicas
 
 ---
 
@@ -88,8 +111,4 @@ Doctorado en Ciencias Biológicas
 
 Este repositorio es de uso académico e investigativo. Puedes adaptarlo, reutilizarlo o citarlo apropiadamente.
 
-# METABARCODING_18S
-7a4c811d8fd54ccac71cc3c1362cc41d1466d329
 
-# 18SMETABARCODING
-68acc9f9e605ceda669940079a2dfbae1bec2df8
