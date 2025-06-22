@@ -18,7 +18,7 @@ Comparar el impacto de diferentes combinaciones bioinformáticas sobre la detecc
 
 El análisis contempla combinaciones formadas por:
 
-- **Recorte**: `cutadapt`, `trimmomatic_5W`
+- **Recorte**: `cutadapt`, `trimmomatic_5W`, `fastp`
 - **Estrategias de ensamblado**:
   - `concat_CS`: concatenación con script personalizado
   - `concat_CP`: concatenación con PandaSeq
@@ -30,7 +30,7 @@ El análisis contempla combinaciones formadas por:
   - `SILVA132`
   - `SILVA138`
 
-Total de combinaciones: 2 (recortes) × 5 (ensambles) × 3 (BD) = **30 pipelines**
+Total de combinaciones: 3 (recortes) × 5 (ensambles) × 3 (BD) = **45 pipelines**
 
 ---
 ## 🧰 Análisis de calidad posterior al recorte
@@ -48,10 +48,14 @@ results/
 │ ├── tabla_resumen_cutadapt
 │ ├── resumen_bases_Q20
 │ └── distribucion_tamanos
-└── trimmomatic_Q20/
-├── tabla_resumen_trimmomatic
-├── resumen_bases_Q20
-└── distribucion_tamanos
+├──trimmomatic_Q20/
+│ ├── tabla_resumen_trimmomatic
+│ ├── resumen_bases_Q20
+│ └── distribucion_tamanos
+├── fastp_Q20/
+│ ├── tabla_resumen_fastp
+│ ├── resumen_bases_Q20
+│ └── distribucion_tamanos
 Estos archivos pueden utilizarse para análisis estadísticos y visualización comparativa entre métodos de filtrado.
 
 ---
@@ -70,8 +74,9 @@ data/
 
 scripts/
 ├── 01_filtering/
-│   ├── recorte_cutadapt.sh         # Recorte de adaptadores con cutadapt
-│   └── recorte_trimmomatic.sh      # Recorte de baja calidad con trimmomatic
+│   ├── cutadapt_batch.sh             # Recorte con Cutadapt
+│   ├── trimmomatic_batch_SE.sh          # Recorte con Trimmomatic
+│   ├── fastp_run.sh                # Recorte con fastp
 ├── 02_assembly/ # Scripts de ensamblaje y concatenación
 ├── 03_dada2/ # Scripts de generación de ASVs
 ├── 04_tax_assignment/ # Scripts de clasificación taxonómica
