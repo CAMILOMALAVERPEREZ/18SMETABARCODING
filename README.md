@@ -69,7 +69,9 @@ data/
 ├── 05_taxonomy/ # Clasificación taxonómica (por estrategia y BD)
 
 scripts/
-├── 01_filtering/ # Scripts de recorte
+├── 01_filtering/
+│   ├── recorte_cutadapt.sh         # Recorte de adaptadores con cutadapt
+│   └── recorte_trimmomatic.sh      # Recorte de baja calidad con trimmomatic
 ├── 02_assembly/ # Scripts de ensamblaje y concatenación
 ├── 03_dada2/ # Scripts de generación de ASVs
 ├── 04_tax_assignment/ # Scripts de clasificación taxonómica
