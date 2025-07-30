@@ -1,38 +1,44 @@
 #!/bin/bash
 
-# ========================
-# Script: distribucion_tamanos.sh
-# Uso: bash distribucion_tamanos.sh carpeta_input carpeta_output
-# Ejemplo: bash distribucion_tamanos.sh data/02_filtered/cutadapt results/cutadapt_Q20
-# ========================
+# ========================================
+# Script maestro: calcular distribución de tamaños por filtro
+# Autor: Camilo Malaver
+# Fecha: 2025-07-29
+# ========================================
 
-INPUT_DIR="$1"
-OUTPUT_DIR="$2"
+INPUT_BASE="data/02_filtered"
+OUTPUT_BASE="results/resumen_filtrado"
 
-# Validación de argumentos
-if [ -z "$INPUT_DIR" ] || [ -z "$OUTPUT_DIR" ]; then
-  echo "❌ Uso: bash distribucion_tamanos.sh carpeta_input carpeta_output"
-  echo "   Ejemplo: bash distribucion_tamanos.sh data/02_filtered/cutadapt results/cutadapt_Q20"
-  exit 1
-fi
+mkdir -p "$OUTPUT_BASE"
 
-mkdir -p "$OUTPUT_DIR"
-OUTPUT="$OUTPUT_DIR/distribucion_tamanos.tsv"
-echo -e "Archivo\tLongitud_bp\tConteo" > "$OUTPUT"
+echo "📏 Iniciando cálculo de distribución de tamaños por filtro..."
 
-# Función para calcular distribución de tamaños
+# Función para analizar la distribución de tamaños de un archivo
 analizar_tamano() {
     archivo=$1
     nombre=$(basename "$archivo")
 
     awk 'NR % 4 == 2 {print length($0)}' "$archivo" | \
     sort | uniq -c | \
-    awk -v archivo="$nombre" '{print archivo "\t" $2 "\t" $1}' >> "$OUTPUT"
+    awk -v archivo="$nombre" '{print archivo "\t" $2 "\t" $1}' >> "$OUTFILE"
 }
 
-# Iterar sobre los archivos .fastq en el directorio de entrada
-for archivo in "$INPUT_DIR"/*.fastq; do
-    analizar_tamano "$archivo"
+# Recorrer todas las subcarpetas de filtros
+for FILTRO_DIR in "$INPUT_BASE"/*; do
+    [ -d "$FILTRO_DIR" ] || continue
+    FILTRO=$(basename "$FILTRO_DIR")
+    OUTFILE="$OUTPUT_BASE/distribucion_tamanos_${FILTRO}.tsv"
+
+    echo "🔍 Procesando filtro: $FILTRO"
+    echo -e "Archivo\tLongitud_bp\tConteo" > "$OUTFILE"
+
+    for archivo in "$FILTRO_DIR"/*.fastq; do
+        [ -f "$archivo" ] || continue
+        analizar_tamano "$archivo"
+    done
+
+    echo "✅ Distribución generada: $OUTFILE"
 done
 
-echo "✅ Distribución de tamaños guardada en: $OUTPUT"
+echo "🎯 Análisis de distribución de tamaños completado para todos los filtros."
+

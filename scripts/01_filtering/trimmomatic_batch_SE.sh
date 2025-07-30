@@ -1,37 +1,38 @@
 #!/bin/bash
 
 # Script para recorte con Trimmomatic (modo SINGLE-END)
-# Aplica SLIDINGWINDOW de 1 a 7 y MINLEN=150 a cada archivo
+# Aplica SLIDINGWINDOW de 1 a 7 y MINLEN=150 a cada archivo .fastq
 # Autor: Camilo Malaver
 
 TRIMMOMATIC_JAR="/usr/share/java/trimmomatic.jar"
 INPUT_DIR="data/01_raw"
-OUTPUT_DIR="data/02_filtered/trimmomatic_5W"
+BASE_OUTPUT_DIR="data/02_filtered/trimmomatic_win"
 MIN_LENGTH="MINLEN:150"
 
-mkdir -p "$OUTPUT_DIR"
+# Crear salida base
+mkdir -p "$BASE_OUTPUT_DIR"
 
-# Archivos a procesar (forward y reverse individuales)
-ARCHIVOS=("Cmcontrol1_R1.fastq" "Cmcontrol1_R2.fastq" "Cmcontrol2_R1.fastq" "Cmcontrol2_R2.fastq")
+# Obtener todos los archivos .fastq en la carpeta de entrada
+for FASTQ in "$INPUT_DIR"/*.fastq; do
+    BASENAME=$(basename "$FASTQ" .fastq)
+    echo "🔹 Procesando archivo: $BASENAME"
 
-# Ventanas de calidad a probar
-WINDOWS=("1:20" "2:20" "3:20" "4:20" "5:20" "6:20" "7:20")
+    # Iterar por cada ventana de calidad
+    for WIN_SIZE in {1..7}; do
+        WIN_PARAM="${WIN_SIZE}:20"
+        OUTPUT_DIR="${BASE_OUTPUT_DIR}${WIN_SIZE}"
+        mkdir -p "$OUTPUT_DIR"
 
-for ARCHIVO in "${ARCHIVOS[@]}"; do
-    echo "🔹 Procesando archivo: $ARCHIVO"
+        OUTPUT_FASTQ="$OUTPUT_DIR/${BASENAME}_trimmomatic150len${WIN_SIZE}win.fastq"
 
-    for WIN in "${WINDOWS[@]}"; do
-        echo "  - Aplicando SLIDINGWINDOW: $WIN"
-
-        ARCHIVO_ENTRADA="$INPUT_DIR/$ARCHIVO"
-        ARCHIVO_SALIDA="$OUTPUT_DIR/${ARCHIVO%.fastq}_trimmomatic150len${WIN//:/}win.fastq"
+        echo "  - Aplicando SLIDINGWINDOW:$WIN_PARAM -> $OUTPUT_FASTQ"
 
         java -jar "$TRIMMOMATIC_JAR" SE -phred33 \
-            "$ARCHIVO_ENTRADA" \
-            "$ARCHIVO_SALIDA" \
-            SLIDINGWINDOW:$WIN $MIN_LENGTH
+            "$FASTQ" \
+            "$OUTPUT_FASTQ" \
+            SLIDINGWINDOW:$WIN_PARAM $MIN_LENGTH
     done
 done
 
-echo "✔ Todos los archivos han sido procesados con Trimmomatic (modo SE)"
+echo "✔ Todos los archivos han sido procesados con Trimmomatic en modo SE (ventanas 1 a 7)"
 

@@ -1,25 +1,19 @@
 #!/bin/bash
 
-# ========================
-# Script: analisis_bases_calidad.sh
-# Uso: bash analisis_bases_calidad.sh carpeta_input carpeta_output
-# Ejemplo: bash analisis_bases_calidad.sh data/02_filtered/cutadapt results/cutadapt_Q20
-# ========================
+# ========================================
+# Script maestro: analizar bases Q<20 para todas las subcarpetas de 02_filtered
+# Autor: Camilo Malaver
+# Fecha: 2025-07-29
+# ========================================
 
-INPUT_DIR="$1"
-OUTPUT_DIR="$2"
+INPUT_BASE="data/02_filtered"
+OUTPUT_BASE="results/resumen_filtrado"
 
-# Validar argumentos
-if [ -z "$INPUT_DIR" ] || [ -z "$OUTPUT_DIR" ]; then
-  echo "❌ Uso: bash analisis_bases_calidad.sh carpeta_input carpeta_output"
-  echo "   Ejemplo: bash analisis_bases_calidad.sh data/02_filtered/cutadapt results/cutadapt_Q20"
-  exit 1
-fi
+mkdir -p "$OUTPUT_BASE"
 
-mkdir -p "$OUTPUT_DIR"
-OUTPUT="$OUTPUT_DIR/resumen_bases_Q20.tsv"
-echo -e "Archivo\tTotal_bases\tBases_Q<20\t%Q<20" > "$OUTPUT"
+echo "📊 Iniciando análisis de calidad (Q<20) para todas las subcarpetas de $INPUT_BASE"
 
+# Función para calcular bases Q<20
 analizar_archivo() {
     archivo=$1
     nombre=$(basename "$archivo")
@@ -40,12 +34,26 @@ analizar_archivo() {
         perc_q20="NA"
     fi
 
-    echo -e "$nombre\t$total_bases\t$bases_q20\t$perc_q20" >> "$OUTPUT"
+    echo -e "$nombre\t$total_bases\t$bases_q20\t$perc_q20" >> "$OUTFILE"
 }
 
-for archivo in "$INPUT_DIR"/*.fastq; do
-    analizar_archivo "$archivo"
+# Recorrer cada subcarpeta de filtros
+for FILTRO_DIR in "$INPUT_BASE"/*; do
+    [ -d "$FILTRO_DIR" ] || continue
+    FILTRO=$(basename "$FILTRO_DIR")
+    OUTFILE="$OUTPUT_BASE/resumen_bases_Q20_${FILTRO}.tsv"
+
+    echo "🔍 Analizando filtro: $FILTRO"
+    echo -e "Archivo\tTotal_bases\tBases_Q<20\t%Q<20" > "$OUTFILE"
+
+    # Iterar sobre los archivos .fastq del filtro
+    for archivo in "$FILTRO_DIR"/*.fastq; do
+        [ -f "$archivo" ] || continue
+        analizar_archivo "$archivo"
+    done
+
+    echo "✅ Resumen generado: $OUTFILE"
 done
 
-echo "✅ Análisis completado. Resultado en: $OUTPUT"
+echo "🎯 Análisis de calidad Q<20 completado para todos los filtros."
 
