@@ -33,7 +33,7 @@ def process_sample(forward_path, reverse_path, output_path):
         rev_rc = rev.seq.reverse_complement()
 
         # Concatenar con un separador '-' (como pediste)
-        new_seq = fwd.seq + Seq("-") + rev_rc
+        new_seq = fwd.seq + Seq("N") + rev_rc
 
         # Construir calidades: forward + [0 para '-' ] + reverse invertida
         new_qual = (
