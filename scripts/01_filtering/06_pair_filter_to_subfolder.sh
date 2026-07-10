@@ -11,7 +11,8 @@
 set -euo pipefail
 
 # ======= CONFIG =======
-BASE_DIR="/home/camilomalaver/18SMETABARCODING_local/data/02_filtered"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+BASE_DIR="${ROOT}/data/02_filtered"
 FILTERS=("cutadapt" "fastp" "trimmomatic_win4" "trimmomatic_win3")
 # ======================
 

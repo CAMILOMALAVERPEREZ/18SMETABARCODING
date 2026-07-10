@@ -1,121 +1,146 @@
+# Non-overlapping paired-end reads in 18S metabarcoding
 
-HEAD
-# Proyecto de Metabarcoding 18S - Análisis comparativo de pipelines
+This repository contains the bioinformatic workflow associated with the manuscript:
 
-Este repositorio contiene el flujo de trabajo bioinformático completo para el análisis de secuencias Illumina MiSeq PE 250x250 dirigidas a la región V4/V5 del gen 18S, amplificada mediante los cebadores VESPA.
+**Non-overlapping paired-end reads in 18S metabarcoding: concatenation of prefiltered reads enables fecal eukaryome profiling**
 
-Se evaluaron múltiples **combinaciones de pipelines bioinformáticos** mediante el uso de distintas herramientas de recorte, estrategias de ensamblado y bases de datos para asignación taxonómica.
+The workflow evaluates preprocessing, read-processing and taxonomic-assignment strategies for 18S rRNA metabarcoding of fecal samples amplified with VESPA primers targeting the V4-V5 region.
 
----
+## Project overview
 
-## 🔬 Objetivo del proyecto
+This study addresses a common challenge in 18S metabarcoding: paired-end reads generated from variable-length amplicons may fail to overlap consistently. To evaluate alternatives for non-overlapping paired-end reads, the workflow compared pre-trimming tools, read-processing strategies, DADA2 ASV inference and taxonomic assignment using multiple reference databases.
 
-Comparar el impacto de diferentes combinaciones bioinformáticas sobre la detección y clasificación de taxones eucariotas, usando datos reales de muestras fecales de aves.
+The main components of the analysis were:
 
----
+- evaluation of pre-trimming effects on read loss, base loss, Q<30 bases and read-length distributions;
+- comparison of paired-end read-processing strategies, including direct concatenation of R1 and R2 reads;
+- ASV inference using DADA2;
+- taxonomic assignment using PR2, SILVA132 and SILVA138_custom;
+- assessment of taxon recovery in two inoculated fecal controls;
+- taxonomic inspection of 13 non-inoculated market fecal samples.
 
-## 🧪 Combinaciones evaluadas
+## Amplicon and sequencing context
 
-El análisis contempla combinaciones formadas por:
+The workflow was designed for 18S rRNA V4-V5 amplicons generated with VESPA primers:
 
-- **Recorte**: `cutadapt`, `trimmomatic_5W`, `fastp`
-- **Estrategias de ensamblado**:
-  - `concat_CS`: concatenación con script personalizado
-  - `concat_CP`: concatenación con PandaSeq
-  - `merge_and_concat`: fusión y concatenación con PandaSeq
-  - `forward_only`: uso de solo lecturas forward
-  - `reverse_only`: uso de solo lecturas reverse
-- **Bases de datos** para asignación taxonómica:
-  - `PR2`
-  - `SILVA132`
-  - `SILVA138`
+Forward primer:
+AGCAGCCGCGGTAATTCC
 
-Total de combinaciones: 3 (recortes) × 5 (ensambles) × 3 (BD) = **45 pipelines**
+Reverse primer:
+TCAATTYCTTIAASTTTC
 
----
-## 🧰 Análisis de calidad posterior al recorte
+The analysis was applied to paired-end Illumina reads from fecal samples. Raw FASTQ files are not included in this repository.
 
-Después de aplicar los filtros con **cutadapt** y **trimmomatic**, se ejecutaron análisis complementarios para evaluar el efecto del recorte sobre la calidad de las secuencias y las características de los fragmentos:
+## Main workflow
 
-- **Resumen de filtrado:** total de secuencias, bases y porcentaje de pérdida tras el recorte.
-- **Bases con calidad Q<20:** conteo y porcentaje de bases por debajo del umbral Q20.
-- **Distribución de tamaños:** distribución de longitudes de secuencias tras el filtrado.
-
-Los resultados de estos análisis se encuentran organizados en:
-results/
-└── resumen_filtrado/
-├── cutadapt_Q20/
-│ ├── tabla_resumen_cutadapt
-│ ├── resumen_bases_Q20
-│ └── distribucion_tamanos
-├──trimmomatic_Q20/
-│ ├── tabla_resumen_trimmomatic
-│ ├── resumen_bases_Q20
-│ └── distribucion_tamanos
-├── fastp_Q20/
-│ ├── tabla_resumen_fastp
-│ ├── resumen_bases_Q20
-│ └── distribucion_tamanos
-Estos archivos pueden utilizarse para análisis estadísticos y visualización comparativa entre métodos de filtrado.
-
----
-
-## 📁 Estructura del repositorio
-
-data/
-├── 01_raw/ # Secuencias FASTQ originales
-├── 02_fastqc/ # Informes de calidad con FastQC
-├── 02_filtered/ # Lecturas recortadas por estrategia
-│ ├── cutadapt/
-│ └── trimmomatic_5W/
-├── 03_assembled/ # Ensamblado (concat, merge, forward, reverse)
-├── 04_dada2_asvs/ # Resultado de DADA2 (ASVs por combinación)
-├── 05_taxonomy/ # Clasificación taxonómica (por estrategia y BD)
+The repository is organized around the following analysis stages:
 
 scripts/
 ├── 01_filtering/
-│   ├── cutadapt_batch.sh             # Recorte con Cutadapt
-│   ├── trimmomatic_batch_SE.sh          # Recorte con Trimmomatic
-│   ├── fastp_run.sh                # Recorte con fastp
-├── 02_assembly/ # Scripts de ensamblaje y concatenación
-├── 03_dada2/ # Scripts de generación de ASVs
-├── 04_tax_assignment/ # Scripts de clasificación taxonómica
-├── 05_visualization/ # Scripts para análisis gráfico y estadístico
+├── 02_assembly/
+├── 03_dada2/
+├── 04_taxonomy/
+├── 06_inoculated_controls/
+└── 07_non_inoculated_samples/
 
-results/
-├── tablas_genero/ # Tablas de abundancia por género
-├── graficos/ # Gráficos de diversidad, composición, etc.
-├── comparaciones_pipeline/ # Comparaciones cruzadas entre combinaciones
-├── resumen_filtrado/ # Resultados de calidad y fragmentación post-filtrado
+These folders contain scripts and workflow documentation used for pre-trimming evaluation, read processing, ASV inference, taxonomic assignment and taxonomic comparisons.
 
-notebooks/ # Jupyter Notebooks para visualización
-envs/ # Archivos de entorno (conda, QIIME, etc.)
+Exploratory or deprecated analyses are not part of the recommended final workflow.
 
----
+## Pre-trimming tools
 
-## 🚀 Cómo usar este repositorio
+The workflow evaluated:
 
-1. Clona este repositorio:
-git clone https://github.com/CAMILOMALAVERPEREZ/METABARCODING18S.git
-cd METABARCODING18S
+- Cutadapt
+- fastp
+- Trimmomatic sliding-window configurations
 
-2. Ejecuta los scripts en orden, comenzando desde `scripts/01_filtering/`.
+Pre-trimming was assessed using script outputs summarizing read retention, base retention, Q<30 bases and read-length distributions.
 
-3. Coloca tus archivos FASTQ originales en `data/01_raw/`.
+## Read-processing strategies
 
-4. Revisa los resultados en la carpeta `results/`.
+The evaluated read-processing strategies included:
 
----
+- direct concatenation of forward and reverse reads;
+- concatenation using an N spacer;
+- merge-and-concat strategy;
+- forward-only reads;
+- reverse-only reads.
 
-## 👨‍🔬 Autor
+The final manuscript focuses on the strategies that produced usable DADA2 outputs and were relevant for downstream taxonomic comparison.
 
-M. sc Sergio Camilo Malaver Pérez  
-Doctorante en Ciencias Quimico Biológicas
+## ASV inference
 
----
+ASV inference was performed with DADA2 using QIIME 2 workflows. The deposited processed data include ASV feature tables and representative sequences for the final deposited strategies.
 
-## 📜 Licencia
+## Taxonomic assignment
 
-Este repositorio es de uso académico e investigativo. Puedes adaptarlo, reutilizarlo o citarlo apropiadamente.
+Taxonomic assignment was performed using QIIME 2 feature-classifier classify-sklearn with Naive Bayes classifiers.
 
+The databases evaluated were:
 
+- PR2
+- SILVA132
+- SILVA138_custom
+
+## SILVA138_custom database
+
+The SILVA138_custom classifier and associated reference files are provided as part of the processed-data deposit.
+
+The classifier can be used directly in QIIME 2 with:
+
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva-138.2-groups-V4V5-min400-clean-v2-classifier.qza \
+  --i-reads rep_seqs.qza \
+  --o-classification taxonomy_SILVA138_custom.qza
+
+The custom database package includes:
+
+- silva-138.2-groups-V4V5-min400-clean-v2-classifier.qza
+- silva-138.2-groups-V4V5-seqs-min400-clean-v2.qza
+- silva-138.2-groups-V4V5-tax-min400-clean-v2.qza
+- V4V5_min400_clean_v2.fasta
+- V4V5_min400_taxonomy_clean_v2.tsv
+
+Users of this custom database should cite the associated manuscript and the original SILVA database release from which the reference files were derived.
+
+## Data availability
+
+Raw sequencing reads are not stored in this GitHub repository.
+
+Data are organized across three platforms:
+
+NCBI SRA:
+Raw paired-end FASTQ files.
+
+Zenodo:
+Processed data, QIIME 2 artifacts, taxonomy tables, metadata and SILVA138_custom database.
+
+GitHub:
+Scripts, workflow documentation and usage instructions.
+
+Accession numbers and DOI links will be added after deposition.
+
+## Repository contents
+
+This GitHub repository is intended to contain code and documentation only.
+
+Large files are excluded from version control, including:
+
+- raw FASTQ files;
+- QIIME 2 artifacts;
+- processed data tables;
+- result folders;
+- logs and temporary files.
+
+## Citation
+
+Please cite the associated manuscript when using this workflow or the SILVA138_custom database.
+
+## Author
+
+Sergio Camilo Malaver Pérez
+
+## License
+
+This repository is intended for academic and research use. A formal license file should be added before final release.

@@ -26,11 +26,12 @@ for fwd in "$RAW_DIR"/*_R1.fastq; do
         -O "$rev_out" \
         --detect_adapter_for_pe \
         --thread 4 \
-        --qualified_quality_phred 20 \
-        --length_required 100 \
+        --qualified_quality_phred 30 \
+        --length_required 150 \
         --html "$html_report" \
         --json "$json_report" \
         --report_title "Fastp Report for $base"
 done
 
 echo "✅ Procesamiento con fastp completado."
+

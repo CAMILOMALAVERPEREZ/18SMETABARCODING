@@ -11,7 +11,7 @@ mkdir -p "$OUTPUT_DIR"
 
 # Parámetros de corte
 LENGTHCUT=150
-QUALITY=20
+QUALITY=30
 
 # Lista de archivos forward (los reverse se asumen con _R2)
 ARCHIVOS_FORWARD=($(ls ${INPUT_DIR}/*_R1.fastq))

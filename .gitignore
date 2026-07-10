@@ -1,17 +1,47 @@
-# Ignorar datos pesados
+# Raw sequencing data
 *.fastq
 *.fastq.gz
-*.html
-*.zip
-*.tar.gz
-*.bam
-*.fasta
-*.fa
 *.fq
-*.log
+*.fq.gz
+
+# Large bioinformatic artifacts
+*.qza
+*.qzv
+*.biom
+*.bam
 *.sam
 *.vcf
 
-# Ignorar carpetas grandes
+# Compressed files and archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+
+# Reports and logs
+*.html
+*.log
+logs/
+debug_validate.log
+
+# Data and results folders are not stored in GitHub
 data/
 results/
+
+# Local data-availability packages prepared for SRA/Zenodo
+manuscript_data_availability/
+manuscript_data_availability_working_checks/
+
+# Jupyter and temporary files
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# Local notes or accidental files
+aumentar memoria.txt
+ids.txt
+bash
+conda
+scripts_snapshot.tar.gz
+concat_trimmomatic_win5.py

@@ -19,7 +19,7 @@ for FASTQ in "$INPUT_DIR"/*.fastq; do
 
     # Iterar por cada ventana de calidad
     for WIN_SIZE in {1..7}; do
-        WIN_PARAM="${WIN_SIZE}:20"
+        WIN_PARAM="${WIN_SIZE}:30"
         OUTPUT_DIR="${BASE_OUTPUT_DIR}${WIN_SIZE}"
         mkdir -p "$OUTPUT_DIR"
 

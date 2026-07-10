@@ -1,7 +1,8 @@
+
 #!/bin/bash
 # --------------------------------------------
 # SCRIPT: run_mc_pandaseq.sh
-# USO: Hace Merge a lecturas que tienen como minimo 10 pb similares, el resto concatena y al final lo unifica en una sola carpeta
+# USO: Hace Merge a lecturas que tienen como minimo 20 pb similares, el resto concatena y al final lo unifica en una sola carpeta
 # AUTOR: Camilo Malaver Pérez
 # FECHA: 2025-08-22
 # --------------------------------------------
@@ -9,20 +10,22 @@
 set -euo pipefail
 
 # ========= CONFIG =========
-PROJ="/home/camilomalaver/18SMETABARCODING_local"
+PROJ="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 IN_BASE="${PROJ}/data/02_filtered"
 OUT_BASE="${PROJ}/data/03_assembled"
+
 
 # Subcarpetas de salida por filtro (abreviaturas pedidas)
 declare -A OUTMAP=(
   ["cutadapt"]="Cuta_M&C"
   ["fastp"]="Fastp_M&C"
-  ["trimmomatic_win4"]="T4_M&C"
   ["trimmomatic_win3"]="T3_M&C"
+  ["trimmomatic_win4"]="T4_M&C"
 )
 
+
 # Mínimo solapamiento para MERGE (PANDAseq -o)
-MIN_OVL=10
+MIN_OVL=20
 
 # Conda env con pandaseq disponible
 CONDA_ENV="qiime2-amplicon-2024.10"
@@ -75,12 +78,15 @@ for FILTER in cutadapt fastp trimmomatic_win4 trimmomatic_win3; do
     trap 'rm -rf "$TMPDIR"' EXIT
 
     if [[ "$R1" == *.gz ]]; then
-      R1_IN="${TMPDIR}/${SAMPLE}_R1.tmp.fastq"
-      R2_IN="${TMPDIR}/${SAMPLE}_R2.tmp.fastq"
-      gzip -cd "$R1" > "$R1_IN"
-      gzip -cd "$R2" > "$R2_IN"
+      R1_IN="${TMPDIR}/R1.fastq"
+      gunzip -c "$R1" > "$R1_IN"
     else
       R1_IN="$R1"
+    fi
+    if [[ "$R2" == *.gz ]]; then
+      R2_IN="${TMPDIR}/R2.fastq"
+      gunzip -c "$R2" > "$R2_IN"
+    else
       R2_IN="$R2"
     fi
 
@@ -111,4 +117,3 @@ for FILTER in cutadapt fastp trimmomatic_win4 trimmomatic_win3; do
 done
 
 echo "[OK] Ensamblaje M&C finalizado. Resultados en: ${OUT_BASE}"
-
