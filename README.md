@@ -21,15 +21,11 @@ The main components of the analysis were:
 
 ## Amplicon and sequencing context
 
-The workflow was designed for 18S rRNA V4-V5 amplicons generated with VESPA primers:
+The workflow was designed for 18S rRNA V4-V5 amplicons generated with VESPA primers.
 
-Forward primer:
-AGCAGCCGCGGTAATTCC
+Sequencing was performed on an Illumina NovaSeq platform using a 500-cycle paired-end configuration, generating 250 bp forward and 250 bp reverse reads.
 
-Reverse primer:
-TCAATTYCTTIAASTTTC
-
-The analysis was applied to paired-end Illumina reads from fecal samples. Raw FASTQ files are not included in this repository.
+Raw FASTQ files are not included in this repository.
 
 ## Main workflow
 
@@ -45,15 +41,13 @@ scripts/
 
 These folders contain scripts and workflow documentation used for pre-trimming evaluation, read processing, ASV inference, taxonomic assignment and taxonomic comparisons.
 
-Exploratory or deprecated analyses are not part of the recommended final workflow.
-
 ## Pre-trimming tools
 
 The workflow evaluated:
 
 - Cutadapt
 - fastp
-- Trimmomatic sliding-window configurations
+- Trimmomatic sliding-window configurations from window 1 to window 7
 
 Pre-trimming was assessed using script outputs summarizing read retention, base retention, Q<30 bases and read-length distributions.
 
@@ -121,18 +115,6 @@ Scripts, workflow documentation and usage instructions.
 
 Accession numbers and DOI links will be added after deposition.
 
-## Repository contents
-
-This GitHub repository is intended to contain code and documentation only.
-
-Large files are excluded from version control, including:
-
-- raw FASTQ files;
-- QIIME 2 artifacts;
-- processed data tables;
-- result folders;
-- logs and temporary files.
-
 ## Citation
 
 Please cite the associated manuscript when using this workflow or the SILVA138_custom database.
@@ -140,7 +122,3 @@ Please cite the associated manuscript when using this workflow or the SILVA138_c
 ## Author
 
 Sergio Camilo Malaver Pérez
-
-## License
-
-This repository is intended for academic and research use. A formal license file should be added before final release.
